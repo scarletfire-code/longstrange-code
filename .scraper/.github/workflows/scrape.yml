@@ -1,0 +1,29 @@
+name: Scrape Sand Dollar
+on:
+  schedule:
+    - cron: "0 14 * * *"   # daily 07:00 PDT
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '18' }
+      - name: Install Playwright
+        run: |
+          cd .scraper
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Run scraper
+        run: |
+          cd .scraper
+          npm run scrape
+      - name: Commit data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/events.*
+          git commit -m "update events" || echo "No changes"
+          git push
