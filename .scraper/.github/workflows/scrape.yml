@@ -4,6 +4,9 @@ on:
     - cron: "0 14 * * *"   # daily 07:00 PDT
   workflow_dispatch:
 
+permissions:
+  contents: write    # <— allows git commit/push
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
